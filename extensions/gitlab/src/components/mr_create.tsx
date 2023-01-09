@@ -1,4 +1,4 @@
-import { showToast, Toast, Form, Icon, popToRoot, Image, ActionPanel, Action } from "@raycast/api";
+import { showToast, Toast, Form, Icon, popToRoot, Image, ActionPanel, Action, Clipboard } from "@raycast/api";
 import { Project, User, Label, Milestone, Branch, Issue } from "../gitlabapi";
 import { gitlab } from "../common";
 import { useState, useEffect } from "react";
@@ -27,7 +27,10 @@ async function submit(values: MRFormValues) {
     }
     const val = toFormValues(values);
     console.log(val);
-    await gitlab.createMR(values.project_id, val);
+    const resultJson = await gitlab.createMR(values.project_id, val);
+    const result = JSON.parse(resultJson);
+    console.log(result);
+    await Clipboard.copy(result.web_url);
     await showToast(Toast.Style.Success, "Merge Request created", "Merge Request creation successful");
     popToRoot();
   } catch (error) {
